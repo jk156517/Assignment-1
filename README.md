@@ -1,0 +1,23 @@
+# Assignment-1
+from bs4 import BeautifulSoup
+import requests
+from csv import writer
+
+
+url = "http://books.toscrape.com/catalogue/page-1.html"
+page = requests.get(url)
+soup = BeautifulSoup(page.content,'html.parser')
+lists = soup.find_all('article',class_="product_pod")
+#lists = soup.find_all('article',class_="product_pod")
+#col-xs-6 col-sm-4 col-md-3 col-lg-3
+with open ('books.csv','w',encoding='utf8',newline='') as f:
+    thewriter = writer(f)
+    header=['title','price','availability','rating']
+    thewriter.writerow(header)
+    for li in lists:
+        title = li.find('h3').text.replace('\n','')
+        price = li.find('p',class_="price_color").text.replace('\n','')
+        availability = li.find('p',class_="instock availability").text.replace('\n','')
+        rating = li.find('p',class_="star-rating")
+        info = [title,price,availability,rating]
+        thewriter.writerow(info)
